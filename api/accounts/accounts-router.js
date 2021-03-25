@@ -1,11 +1,28 @@
 const router = require('express').Router()
+const Acc = require('./accounts-model.js')
 
 router.get('/', async (req, res, next) => {
-  // DO YOUR MAGIC
+  try {
+    const accounts = await Acc.getAll()
+    res.json(accounts)
+  } catch (err) {
+    next(err)
+  }
 })
 
-router.get('/:id', (req, res, next) => {
-  // DO YOUR MAGIC
+router.get('/:id', async (req, res, next) => {
+  try {
+    const accounts = await Acc.getById(id);
+    if (accounts) {
+      res.json(accounts);
+    } else {
+      res.status(404).json({
+        message: "The account with the specified ID does not exist",
+      });
+    }
+  } catch (err) {
+    next(err)
+  }
 })
 
 router.post('/', (req, res, next) => {
