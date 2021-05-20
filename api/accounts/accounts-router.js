@@ -1,6 +1,6 @@
 const router = require("express").Router();
 const Acc = require("./accounts-model");
-const { checkAccountId } = require("./accounts-middleware");
+const { checkAccountId, checkAccountPayload, checkAccountNameUnique } = require("./accounts-middleware");
 
 router.get("/", async (req, res, next) => {
   // DO YOUR MAGIC
@@ -17,16 +17,41 @@ router.get("/:id", checkAccountId, async (req, res, next) => {
   res.json(res.locals.account);
 });
 
-router.post("/", (req, res, next) => {
+router.post("/",checkAccountPayload, async(req, res, next) => {
   // DO YOUR MAGIC
+   try {
+    const acc = await Acc.create({
+      name: req.body.name,
+      budget: req.body.budget,
+    });
+
+    res.json(acc);
+  } catch (err) { next(err) }
 });
 
-router.put("/:id", (req, res, next) => {
+router.put("/:id", checkAccountPayload, checkAccountId, checkAccountNameUnique, async (req, res, next) => {
   // DO YOUR MAGIC
+   try {
+
+     const acc = await Acc.updateById(req.params.id, {
+       name: req.body.name,
+       budget: req.body.budget,
+     });
+
+     res.json(acc);
+   } catch (err) {
+     next(err);
+   }
 });
 
-router.delete("/:id", (req, res, next) => {
+router.delete("/:id", checkAccountId, async(req, res, next) => {
   // DO YOUR MAGIC
+    try {
+      const acc = await Acc.deleteById(req.params.id);
+      res.json(acc);
+    } catch (err) {
+      next(err);
+    }
 });
 
 router.use((err, req, res, next) => {
