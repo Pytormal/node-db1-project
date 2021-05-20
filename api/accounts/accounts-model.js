@@ -28,7 +28,7 @@ const deleteById = async id => {
   // DO YOUR MAGIC
   const toDelete = await getById(id)
 
-  await db('accounts').where('id', id).delet()
+  await db('accounts').where('id', id).delete()
 
   return toDelete
 }
